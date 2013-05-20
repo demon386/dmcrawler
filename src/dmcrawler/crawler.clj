@@ -1,7 +1,8 @@
 (ns dmcrawler.crawler
   (:require [net.cgrand.enlive-html :as html]))
 
-
+; This function is from https://github.com/swannodette/enlive-tutorial/
+; This is also an excellent tutorial on enlive. We use enlive for extracting HTML to nodes (tree).
 (defn fetch-url [url]
   (html/html-resource (java.net.URL. url)))
 
