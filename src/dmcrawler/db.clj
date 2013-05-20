@@ -20,6 +20,9 @@
 (defentity movies-comments
   (table :movies_comments))
 
+(defn clean-movie-id [id]
+  (delete movies-comments (where {:movie_id [= id]})))
+
 (defn insert-movies-comments [movie-id coll]
   (let [store-time (java.sql.Timestamp. (.getTime (java.util.Date.)))
         insert-item (fn [[user-id comment-date rate comment-content]]
@@ -28,8 +31,10 @@
                                             :user_id user-id :comment_date (parse-date-str comment-date)
                                             :rate rate :comment comment-content
                                             :store_time store-time}))
-                           (catch Exception e (.getNextException e))))]
-    (dorun (map insert-item coll))))
-
-(defn clean-movie-id [id]
-  (delete movies-comments (where {:movie_id [= id]})))
+                           (catch org.postgresql.util.PSQLException e
+                             (.getNextException e))))]
+    (try
+      (dorun (map insert-item coll))
+      (catch Exception e
+        (println e)
+        (clean-movie-id movie-id)))))
