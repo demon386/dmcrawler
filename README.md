@@ -1,12 +1,12 @@
 # dmcrawler (Douban Movie Crawler)
 Author: Muchenxuan Tong <demon386@gmail.com>
 
-A Clojure-based Crawler for fetching short comments from Douban movie page. (e.g. http://movie.douban.com/subject/11529526/comments?sort=time)
+A Clojure-based crawler for fetching short comments from Douban movie page. (e.g. http://movie.douban.com/subject/11529526/comments?sort=time)
 
 Features:
-- Store and restore context when problems happened or the program shutted down.
+- Store context when problems happened or the program shutted down.
 - Parallelized crawling on a single machine.
-- Data are stored in the database, with the time of storage information attached.
+- Data are stored in the database, with the storage time attached.
 
 ## Usage
 
