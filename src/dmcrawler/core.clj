@@ -22,7 +22,7 @@
   []
   (format "http://movie.douban.com/subject/%d/" @current-id))
 
-(defn deserialize-states []
+(defn- deserialize-states []
   (try
     (do (reset! visited-ids (io/read-serialized-from "visited.txt"))
         (reset! tovisit-ids (io/read-serialized-from "tovisit.txt"))
@@ -30,7 +30,7 @@
     (catch java.io.FileNotFoundException e
       (println "There's no serialized state. Let's start from something new."))))
 
-(defn serialize-states []
+(defn- serialize-states []
   (try
     (do (io/serialize-to "visited.txt" @visited-ids)
         (io/serialize-to "tovisit.txt" @tovisit-ids)
@@ -51,25 +51,25 @@
     (println (str (get-current-comment-url) parameter))
     (db/insert-movies-comments @current-id rates-info)))
 
-(defn fetch-movies-rates-info-from-current-id []
+(defn- fetch-movies-rates-info-from-current-id []
   (let [num-of-rates (crawler/fetch-num-of-rates (get-current-comment-url))
         chunks (partition-all config/chunk-size (range num-of-rates))]
     (dorun
      (pmap fetch-rates-info-chunk chunks))))
 
-(defn fetch-other-movies-from-current-id []
+(defn- fetch-other-movies-from-current-id []
   (crawler/fetch-other-movies-in-url (get-current-subject-url)))
 
-(defn add-to-visit-candidates [coll]
+(defn- add-to-visit-candidates [coll]
   (println "Here's the new ids from current page: " coll)
   (let [tovisit (filter #(not (contains? (clojure.set/union @visited-ids @forbidden-ids) %)) coll)]
     (reset! tovisit-ids (clojure.set/union @tovisit-ids (set tovisit)))))
 
-(defn mark-current-id-as-visited []
+(defn- mark-current-id-as-visited []
   (swap! tovisit-ids disj @current-id)
   (swap! visited-ids conj @current-id))
 
-(defn process-current-id []
+(defn- process-current-id []
   (try
     (do (add-to-visit-candidates (fetch-other-movies-from-current-id))
         (fetch-movies-rates-info-from-current-id)
@@ -96,7 +96,7 @@
                              (db/clean-movie-id @current-id))))
 
 
-(defn visit-a-new-id []
+(defn- visit-a-new-id []
   (reset! current-id (first @tovisit-ids))
   (println (format "Visiting %d..." @current-id))
   (process-current-id))

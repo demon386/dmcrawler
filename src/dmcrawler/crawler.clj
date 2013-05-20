@@ -42,7 +42,7 @@
                     (Integer.)))))]
     (map extractor comments-info-html)))
 
-(defn extract-comments-content [x]
+(defn- extract-comments-content [x]
   (map (comp first :content) x))
 
 
